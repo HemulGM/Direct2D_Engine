@@ -18,6 +18,8 @@ type
     class operator Implicit(const Rect: TRect): TFloatRect;
   end;
 
+  TWorldDirection = (wdLeft, wdTop, wdRight, wdBottom);
+
   function Angle(Value: Double): Double;
 
 implementation
