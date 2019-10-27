@@ -46,6 +46,17 @@ type
     procedure SetColor(const Value: TColor);
   public
     procedure Draw(Canvas: TDirect2DCanvas); override;
+    constructor Create(AOwner: TObject; ALayer: Integer; Height: Double); virtual;
+    property Color: TColor read FColor write SetColor;
+  end;
+
+  TWall = class(TSprite)
+    function GetCollisonRect: TFloatRect; override;
+  private
+    FColor: TColor;
+    procedure SetColor(const Value: TColor);
+  public
+    procedure Draw(Canvas: TDirect2DCanvas); override;
     procedure Update; override;
     procedure OnCollision(Sprite: TSprite); override;
     constructor Create(AOwner: TObject; ALayer: Integer; Height: Double); virtual;
@@ -59,8 +70,6 @@ type
     procedure SetColor(const Value: TColor);
   public
     procedure Draw(Canvas: TDirect2DCanvas); override;
-    procedure Update; override;
-    procedure OnCollision(Sprite: TSprite); override;
     constructor Create(AOwner: TObject; ALayer: Integer); virtual;
     property Color: TColor read FColor write SetColor;
   end;
@@ -150,11 +159,11 @@ begin
     OffCollisions := False;
   if Core.Keys.KeyIsDown(VK_LEFT) then
   begin
-    Position.X := Position.X - 2;
+    Position.X := Position.X - 3;
   end;
   if Core.Keys.KeyIsDown(VK_RIGHT) then
   begin
-    Position.X := Position.X + 2;
+    Position.X := Position.X + 3;
   end;
 
   if FDoJump then
@@ -257,19 +266,9 @@ begin
   Result := TFloatRect.Create(TPointF.Create(Position.X - Size.Width / 2, Position.Y - Size.Height / 2), Size.Width, Size.Height);
 end;
 
-procedure TFloor.OnCollision(Sprite: TSprite);
-begin
-  //
-end;
-
 procedure TFloor.SetColor(const Value: TColor);
 begin
   FColor := Value;
-end;
-
-procedure TFloor.Update;
-begin
-  //
 end;
 
 { TPlatform }
@@ -298,19 +297,52 @@ begin
   Result := TFloatRect.Create(TPointF.Create(Position.X - Size.Width / 2, Position.Y - Size.Height / 2), Size.Width, Size.Height);
 end;
 
-procedure TPlatform.OnCollision(Sprite: TSprite);
-begin
-  //
-end;
-
 procedure TPlatform.SetColor(const Value: TColor);
 begin
   FColor := Value;
 end;
 
-procedure TPlatform.Update;
+{ TWall }
+
+constructor TWall.Create(AOwner: TObject; ALayer: Integer; Height: Double);
+var Core: TD2EngineCore;
 begin
-  //
+  inherited Create(AOwner, ALayer);
+  Core := TD2EngineCore(Owner);
+  Position := TPointF.Create(Core.Buffer.Width / 2, Core.Buffer.Height - Height / 2);
+  IsStatic := True;
+  Rotation := 0;
+  Size := TSizeF.Create(Core.Buffer.Width, Height);
+  FColor := $00999999;
+end;
+
+procedure TWall.Draw(Canvas: TDirect2DCanvas);
+begin
+  with Canvas do
+  begin
+    Brush.Color := Color;
+    FillRect(CollisionRect.FocusRect);
+  end;
+end;
+
+function TWall.GetCollisonRect: TFloatRect;
+begin
+  Result := TFloatRect.Create(TPointF.Create(Position.X - Size.Width / 2, Position.Y - Size.Height / 2), Size.Width, Size.Height);
+end;
+
+procedure TWall.OnCollision(Sprite: TSprite);
+begin
+
+end;
+
+procedure TWall.SetColor(const Value: TColor);
+begin
+  FColor := Value;
+end;
+
+procedure TWall.Update;
+begin
+
 end;
 
 end.

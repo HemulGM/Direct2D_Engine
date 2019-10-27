@@ -16,7 +16,7 @@ type
     Rotation: Double;
     ToDelete: Boolean;
     //
-    function GetCollisonRect: TFloatRect; virtual; abstract;
+    function GetCollisonRect: TFloatRect; virtual;
     //
     procedure SetLayer(const Value: Integer); virtual;
     procedure SetIsStatic(const Value: Boolean); virtual;
@@ -27,9 +27,10 @@ type
   public
     //
     constructor Create(AOwner: TObject; ALayer: Integer); virtual;
-    procedure Draw(Canvas: TDirect2DCanvas); virtual; abstract;
-    procedure Update; virtual; abstract;
-    procedure OnCollision(Sprite: TSprite); virtual; abstract;
+    procedure Draw(Canvas: TDirect2DCanvas); virtual;
+    procedure Update; virtual;
+    procedure OnCollision(Sprite: TSprite); virtual;
+    procedure AfterCollisionCheck; virtual;
     procedure OnOutOfWorld(Direct: TWorldDirection; NewPosition: TPointF; var Handled: Boolean); virtual;
     //
     property CollisionRect: TFloatRect read GetCollisonRect;
@@ -45,6 +46,11 @@ implementation
 
 { TSprite }
 
+procedure TSprite.AfterCollisionCheck;
+begin
+
+end;
+
 constructor TSprite.Create(AOwner: TObject; ALayer: Integer);
 begin
   inherited Create;
@@ -53,6 +59,21 @@ begin
   FLayer := ALayer;
   Rotation := 0;
   FIsStatic := True;
+end;
+
+procedure TSprite.Draw(Canvas: TDirect2DCanvas);
+begin
+
+end;
+
+function TSprite.GetCollisonRect: TFloatRect;
+begin
+
+end;
+
+procedure TSprite.OnCollision(Sprite: TSprite);
+begin
+
 end;
 
 procedure TSprite.OnOutOfWorld(Direct: TWorldDirection; NewPosition: TPointF;
@@ -74,6 +95,11 @@ end;
 procedure TSprite.SetOwner(const Value: TObject);
 begin
   FOwner := Value;
+end;
+
+procedure TSprite.Update;
+begin
+
 end;
 
 end.

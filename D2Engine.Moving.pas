@@ -34,7 +34,7 @@ constructor TMovingThread.Create;
 begin
   inherited Create(True);
   FStop := False;
-  FSleepTime := 5;
+  FSleepTime := 10;
   FreeOnTerminate := False;
 end;
 

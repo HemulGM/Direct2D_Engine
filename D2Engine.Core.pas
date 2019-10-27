@@ -12,7 +12,7 @@ type
   TD2EngineCore = class;
 
   TKeys = class
-
+    FOwner: TD2EngineCore;
   public
     function KeyIsDown(Key: Word): Boolean;
     constructor Create(AOwner: TD2EngineCore);
@@ -26,6 +26,7 @@ type
     FMoving: TMovingThread;
     FLoopedWorld: Boolean;
     FKeys: TKeys;
+    FWindow: TForm;
     procedure FPaint(ACanvas: TDirect2DCanvas);
     procedure SetBuffer(const Value: TBitmap);
     function GetBuffer: TBitmap;
@@ -40,15 +41,17 @@ type
     procedure Update; virtual;
     procedure Run; virtual;
     procedure CreateTest;
-    constructor Create(VideoWidth, VideoHeight: Integer); virtual;
+    constructor Create(Window: TForm; VideoWidth, VideoHeight: Integer); virtual;
     destructor Destroy; override;
     property Buffer: TBitmap read GetBuffer write SetBuffer;
     property Sprites: TSprites read FSprites write SetSprites;
     property LoopedWorld: Boolean read FLoopedWorld write SetLoopedWorld;       //Если предмет выходит за границы мира, он появляется с другой его стороны
     property Keys: TKeys read FKeys write SetKeys;
+    property OwnerForm: TForm read FWindow;
   end;
 
 implementation
+  uses D2Engine.Sprites.Physical;
 
 { TD2EngineCore }
 
@@ -90,9 +93,10 @@ begin
 
 end;
 
-constructor TD2EngineCore.Create(VideoWidth, VideoHeight: Integer);
+constructor TD2EngineCore.Create(Window: TForm; VideoWidth, VideoHeight: Integer);
 begin
   inherited Create;
+  FWindow := Window;
   FLayers := TLayers.Create;
   FLayers.Add('default');
   FSprites := TSprites.Create;
@@ -249,6 +253,7 @@ begin
   begin
     if not Sprites[s].IsStatic then
     begin
+      Sprites[s].AfterCollisionCheck;
       for i := 0 to Sprites.Count-1 do
         if CollisionFloatRect(Sprites[s], Sprites[i]) then
         begin
@@ -336,11 +341,12 @@ end;
 
 constructor TKeys.Create(AOwner: TD2EngineCore);
 begin
-
+  FOwner := AOwner;
 end;
 
 function TKeys.KeyIsDown(Key: Word): Boolean;
 begin
+  if not FOwner.OwnerForm.Active then Exit(False);
   Result := GetAsyncKeyState(Key) < 0;
 end;
 
